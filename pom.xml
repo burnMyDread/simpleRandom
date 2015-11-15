@@ -34,10 +34,7 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
                 <version>1.5</version>
-                <configuration>
-                    <source>src/main/groovy</source>
-                    <providerSelection>2.4</providerSelection>
-                </configuration>
+
                 <executions>
                     <execution>
                         <goals>

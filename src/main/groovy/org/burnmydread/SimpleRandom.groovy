@@ -12,28 +12,32 @@ import java.nio.ByteBuffer
  * The intent is to have a easy to use Secure RNG.
  */
 class SimpleRandom {
-    private static final BufferedReader devRandom = new BufferedReader(new FileReader('/dev/random'))
+    private InputStream devRandom
 
-
-    void nextBytes(byte[] bytes) {
-        char[] out = new char[bytes.length]
-        int index = 0
-        //The reason that this is not just one call to devRandom.read is that I was getting
-        //poor entropy after the first 32 or so bytes.
-        while ( index  < bytes.length) {
-            //The Math.min covers the case where index - bytes.length is < 32
-            devRandom.read(out, index, Math.min(bytes.length - index, 32))
-            index += 32
-        }
-        out.eachWithIndex{ char entry, int i ->
-            bytes[i] = (byte)entry
+    SimpleRandom() throws IllegalStateException {
+        try {
+            devRandom = new File('/dev/urandom').newInputStream()
+        } catch (IOException e) {
+            try {
+                devRandom = new File('/dev/random').newInputStream()
+            } catch (IOException e2) {
+                throw new IllegalStateException('unsupported platform, /dev/urandom and /dev/random not found.')
+            }
         }
     }
 
-    ByteBuffer nextByteBuffer(int size) {
+    void nextBytes(byte[] bytes) {
+        devRandom.read(bytes, 0, bytes.length )
+    }
+
+    byte[] nextBytes(int size) {
         byte[] rawBytes = new byte[size]
-        nextBytes ( rawBytes )
-        ByteBuffer.wrap(rawBytes)
+        nextBytes( rawBytes )
+        rawBytes
+    }
+
+    ByteBuffer nextByteBuffer(int size) {
+        ByteBuffer.wrap(nextBytes(size))
     }
 
     byte nextByte() {
@@ -42,39 +46,39 @@ class SimpleRandom {
         out[0]
     }
 
-    int unsignedNextInt() {
-        int out = signedNextInt()
+    int nextPositiveInt() {
+        int out = nextPositiveOrNegativeInt()
         if (out < 0) {
             out *= -1
         }
         out
     }
 
-    int signedNextInt() {
+    int nextPositiveOrNegativeInt() {
         ByteBuffer buffer = nextByteBuffer(4)
         buffer.getInt()
     }
 
     int nextInt() {
-        unsignedNextInt()
+        nextPositiveInt()
     }
 
 
     int nextInt(int maxValue) {
         int out = nextInt()
         while (out > maxValue) {
-            out = unsignedNextInt()
+            out = nextInt()
         }
         out
     }
 
-    short signedNextShort() {
+    short nextPositiveOrNegativeShort() {
         ByteBuffer buffer = nextByteBuffer(2)
         buffer.getShort()
     }
 
-    short unsignedNextShort() {
-        short out = signedNextShort()
+    short nextPositiveShort() {
+        short out = nextPositiveOrNegativeShort()
         if (out < 0) {
             out *= -1
         }
@@ -82,24 +86,24 @@ class SimpleRandom {
     }
 
     short nextShort() {
-        unsignedNextShort()
+        nextPositiveShort()
     }
 
     short nextShort(short maxValue) {
-        short out = unsignedNextShort()
+        short out = nextPositiveShort()
         while (out > maxValue) {
-            out = unsignedNextShort()
+            out = nextPositiveShort()
         }
         out
     }
 
-    long signedNextLong() {
+    long nextPositiveOrNegativeLong() {
         ByteBuffer buffer = nextByteBuffer(8)
         buffer.getLong()
     }
 
-    long unsignedNextLong() {
-        short out = signedNextLong()
+    long nextPositiveLong() {
+        short out = nextPositiveOrNegativeLong()
         if (out < 0) {
             out *= -1
         }
@@ -108,44 +112,56 @@ class SimpleRandom {
 
 
     long nextLong() {
-        unsignedNextLong()
+        nextPositiveLong()
     }
 
     long nextLong(long maxValue) {
-        long out = unsignedNextLong()
+        long out = nextPositiveLong()
         while (out > maxValue) {
-            out = unsignedNextLong()
+            out = nextPositiveLong()
         }
         out
     }
 
     boolean nextBoolean() {
-        signedNextInt() % 2 == 0
+        nextByte() % 2 == 0
     }
 
     char nextChar() {
-        (char) nextShort()
+        nextPositiveOrNegativeShort()
     }
 
-    char nextChar(short maxvalue) {
-        (char) nextShort(maxvalue)
+    char nextChar(short maxValue) {
+        short out = nextPositiveOrNegativeShort()
+        while (out > maxValue) {
+            out = nextPositiveOrNegativeShort()
+        }
+         out
     }
 
-    char nextChar(int maxvalue) {
-        (char) nextShort((short) (maxvalue % Short.MAX_VALUE))
+    char nextChar(int maxValue) {
+        short out = nextPositiveOrNegativeShort()
+        while (out > (short)(maxValue % Short.MAX_VALUE)) {
+            out = nextPositiveOrNegativeShort()
+        }
+        out
     }
 
-    char nextChar(char maxvalue) {
-        (char) nextShort((short) maxvalue % Short.MAX_VALUE)
+    char nextChar(char maxValue) {
+        short out = nextPositiveOrNegativeShort()
+        while (out > (short)(maxValue % Short.MAX_VALUE)) {
+            out = nextPositiveOrNegativeShort()
+        }
+        out
     }
 
-    float signedNextFloat() {
+    float nextPositiveOrNegativeFloat() {
         ByteBuffer buffer = nextByteBuffer(4)
         buffer.getFloat()
     }
 
-    float unsignedNextFloat() {
-        short out = signedNextFloat()
+    float nextPositiveFloat() {
+        short out = nextPositiveOrNegativeFloat()
         if (out < 0) {
             out *= -1
         }
@@ -153,13 +169,13 @@ class SimpleRandom {
     }
 
     float nextFloat() {
-        unsignedNextFloat()
+        nextPositiveFloat()
     }
 
     float nextFloat(float maxValue) {
-        float out = unsignedNextFloat()
+        float out = nextPositiveFloat()
         while (out > maxValue) {
-            out = unsignedNextFloat()
+            out = nextPositiveFloat()
         }
         out
     }
@@ -168,13 +184,13 @@ class SimpleRandom {
         nextFloat((float)maxValue)
     }
 
-    double signedNextDouble() {
-        ByteBuffer buffer = nextByteBuffer(4)
+    double nextPositiveOrNegitiveDouble() {
+        ByteBuffer buffer = nextByteBuffer(8)
         buffer.getDouble()
     }
 
-    double unsignedNextDouble() {
-        short out = signedNextDouble()
+    double nextPositiveDouble() {
+        short out = nextPositiveOrNegitiveDouble()
         if (out < 0) {
             out *= -1
         }
@@ -182,13 +198,13 @@ class SimpleRandom {
     }
 
     double nextDouble() {
-        unsignedNextDouble()
+        nextPositiveDouble()
     }
 
     double nextDouble(double maxValue) {
-        float out = unsignedNextDouble()
+        float out = nextPositiveDouble()
         while (out > maxValue) {
-            out = unsignedNextDouble()
+            out = nextPositiveDouble()
         }
         out
     }
