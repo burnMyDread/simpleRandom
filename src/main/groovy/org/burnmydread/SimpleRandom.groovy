@@ -156,14 +156,14 @@ class SimpleRandom {
     }
 
     float nextPositiveOrNegativeFloat() {
-        ByteBuffer buffer = nextByteBuffer(4)
+        ByteBuffer buffer = nextByteBuffer(8)
         buffer.getFloat()
     }
 
     float nextPositiveFloat() {
-        short out = nextPositiveOrNegativeFloat()
-        if (out < 0) {
-            out *= -1
+        float out = nextPositiveOrNegativeFloat()
+        if (out < 0.0f) {
+            out *= -1.0f
         }
         out
     }
@@ -184,15 +184,15 @@ class SimpleRandom {
         nextFloat((float)maxValue)
     }
 
-    double nextPositiveOrNegitiveDouble() {
+    double nextPositiveOrNegativeDouble() {
         ByteBuffer buffer = nextByteBuffer(8)
         buffer.getDouble()
     }
 
     double nextPositiveDouble() {
-        short out = nextPositiveOrNegitiveDouble()
-        if (out < 0) {
-            out *= -1
+        double out = nextPositiveOrNegativeDouble()
+        if (out < 0.0) {
+            out *= -1.0
         }
         out
     }

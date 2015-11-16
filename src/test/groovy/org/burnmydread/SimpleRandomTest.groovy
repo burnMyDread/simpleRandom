@@ -106,4 +106,18 @@ class SimpleRandomTest
         then:
             assert generatedDoubles != nullDoubles
     }
+
+    def initialTestFornextPositiveOrNegativeDouble() {
+        when:
+        SimpleRandom gen = new SimpleRandom()
+        List generatedDoubles = []
+        List nullDoubles = []
+        for(int i = 0; i < 1000; i++) {
+            generatedDoubles.add(gen.nextPositiveOrNegativeDouble())
+            nullDoubles.add(0.0)
+        }
+        println generatedDoubles
+        then:
+        assert generatedDoubles != nullDoubles
+    }
 }
