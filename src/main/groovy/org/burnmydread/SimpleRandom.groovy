@@ -156,7 +156,7 @@ class SimpleRandom {
     }
 
     float nextPositiveOrNegativeFloat() {
-        ByteBuffer buffer = nextByteBuffer(8)
+        ByteBuffer buffer = nextByteBuffer(4)
         buffer.getFloat()
     }
 
@@ -202,7 +202,7 @@ class SimpleRandom {
     }
 
     double nextDouble(double maxValue) {
-        float out = nextPositiveDouble()
+        double out = nextPositiveDouble()
         while (out > maxValue) {
             out = nextPositiveDouble()
         }
