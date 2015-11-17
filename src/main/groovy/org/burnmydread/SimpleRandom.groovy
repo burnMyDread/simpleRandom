@@ -14,7 +14,11 @@ import java.nio.ByteBuffer
 class SimpleRandom {
     private InputStream devRandom
 
-    SimpleRandom() throws IllegalStateException {
+    SimpleRandom()  {
+
+    }
+
+    void init() throws IllegalStateException {
         try {
             devRandom = new File('/dev/urandom').newInputStream()
         } catch (IOException e) {
@@ -26,7 +30,14 @@ class SimpleRandom {
         }
     }
 
+    private initIfNeeded() {
+        if(devRandom == null) {
+            init()
+        }
+    }
+
     void nextBytes(byte[] bytes) {
+        initIfNeeded()
         devRandom.read(bytes, 0, bytes.length )
     }
 
@@ -48,7 +59,9 @@ class SimpleRandom {
 
     int nextPositiveInt() {
         int out = nextPositiveOrNegativeInt()
-        if (out < 0) {
+        if (out == Integer.MIN_VALUE) {
+            out -= 1
+        } else if(out < 0) {
             out *= -1
         }
         out
@@ -65,11 +78,16 @@ class SimpleRandom {
 
 
     int nextInt(int maxValue) {
-        int out = nextInt()
-        while (out > maxValue) {
-            out = nextInt()
+        if(maxValue < Short.MAX_VALUE) {
+            short shortenedMaxValue = Short.parseShort("${maxValue}")
+            return (0 + nextShort(shortenedMaxValue))
+        } else {
+            int out = nextInt()
+            while (out > maxValue) {
+                out = nextInt()
+            }
+           return out
         }
-        out
     }
 
     short nextPositiveOrNegativeShort() {
@@ -79,7 +97,9 @@ class SimpleRandom {
 
     short nextPositiveShort() {
         short out = nextPositiveOrNegativeShort()
-        if (out < 0) {
+        if (out == Short.MIN_VALUE) {
+            out -= 1
+        } else if(out < 0) {
             out *= -1
         }
         out
@@ -104,8 +124,10 @@ class SimpleRandom {
 
     long nextPositiveLong() {
         short out = nextPositiveOrNegativeLong()
-        if (out < 0) {
-            out *= -1
+        if (out == Long.MIN_VALUE) {
+            out -= 1l
+        } else if(out < 0l) {
+            out *= -1l
         }
         out
     }
@@ -116,11 +138,16 @@ class SimpleRandom {
     }
 
     long nextLong(long maxValue) {
-        long out = nextPositiveLong()
-        while (out > maxValue) {
-            out = nextPositiveLong()
+        if(maxValue < Integer.MAX_VALUE) {
+            int shortenedMaxValue = Integer.parseInt("${maxValue}")
+            return (0l + nextInt(shortenedMaxValue))
+        } else {
+            long out = nextPositiveLong()
+            while (out > maxValue) {
+                out = nextPositiveLong()
+            }
+           return out
         }
-        out
     }
 
     boolean nextBoolean() {
@@ -139,20 +166,8 @@ class SimpleRandom {
          out
     }
 
-    char nextChar(int maxValue) {
-        short out = nextPositiveOrNegativeShort()
-        while (out > (short)(maxValue % Short.MAX_VALUE)) {
-            out = nextPositiveOrNegativeShort()
-        }
-        out
-    }
-
     char nextChar(char maxValue) {
-        short out = nextPositiveOrNegativeShort()
-        while (out > (short)(maxValue % Short.MAX_VALUE)) {
-            out = nextPositiveOrNegativeShort()
-        }
-        out
+        nextChar((short)maxValue)
     }
 
     float nextPositiveOrNegativeFloat() {
@@ -162,7 +177,9 @@ class SimpleRandom {
 
     float nextPositiveFloat() {
         float out = nextPositiveOrNegativeFloat()
-        if (out < 0.0f) {
+        if (out == Float.MIN_VALUE) {
+            out -= 1.0f
+        } else if(out < 0.0f) {
             out *= -1.0f
         }
         out
@@ -191,7 +208,9 @@ class SimpleRandom {
 
     double nextPositiveDouble() {
         double out = nextPositiveOrNegativeDouble()
-        if (out < 0.0) {
+        if (out == Double.MIN_VALUE) {
+            out -= 1.0
+        } else if(out < 0.0) {
             out *= -1.0
         }
         out
@@ -202,11 +221,16 @@ class SimpleRandom {
     }
 
     double nextDouble(double maxValue) {
-        double out = nextPositiveDouble()
-        while (out > maxValue) {
-            out = nextPositiveDouble()
+        if(maxValue < Float.MAX_VALUE) {
+            float shortenedMaxValue = Float.parseFloat("${maxValue}")
+            return (0.0 + nextFloat(shortenedMaxValue))
+        } else {
+            double out = nextPositiveDouble()
+            while (out > maxValue) {
+                out = nextPositiveDouble()
+            }
+            return out
         }
-        out
     }
 
     double nextDouble(int maxValue) {
