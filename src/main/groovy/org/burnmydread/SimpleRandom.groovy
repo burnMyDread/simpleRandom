@@ -60,7 +60,7 @@ class SimpleRandom {
     int nextPositiveInt() {
         int out = nextPositiveOrNegativeInt()
         if (out == Integer.MIN_VALUE) {
-            out -= 1
+            out = Integer.MAX_VALUE
         } else if(out < 0) {
             out *= -1
         }
@@ -98,7 +98,7 @@ class SimpleRandom {
     short nextPositiveShort() {
         short out = nextPositiveOrNegativeShort()
         if (out == Short.MIN_VALUE) {
-            out -= 1
+            out = Short.MAX_VALUE
         } else if(out < 0) {
             out *= -1
         }
@@ -125,7 +125,7 @@ class SimpleRandom {
     long nextPositiveLong() {
         short out = nextPositiveOrNegativeLong()
         if (out == Long.MIN_VALUE) {
-            out -= 1l
+            out = Long.MAX_VALUE
         } else if(out < 0l) {
             out *= -1l
         }
@@ -178,7 +178,7 @@ class SimpleRandom {
     float nextPositiveFloat() {
         float out = nextPositiveOrNegativeFloat()
         if (out == Float.MIN_VALUE) {
-            out -= 1.0f
+            out = Float.MAX_VALUE
         } else if(out < 0.0f) {
             out *= -1.0f
         }
@@ -209,7 +209,7 @@ class SimpleRandom {
     double nextPositiveDouble() {
         double out = nextPositiveOrNegativeDouble()
         if (out == Double.MIN_VALUE) {
-            out -= 1.0
+            out = Double.MAX_VALUE
         } else if(out < 0.0) {
             out *= -1.0
         }
