@@ -4,7 +4,11 @@
 
 package org.burnmydread
 
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary
+import org.apache.commons.math3.stat.inference.TTest
+import spock.lang.Ignore
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * Tests for the {@link SimpleRandom} class.
@@ -233,4 +237,31 @@ class SimpleRandomTest
         then:
             assert generatedDoubles != nullDoubles
     }
+
+    @Unroll
+    def "check that two lists are not statistically similar for method: #methodToTest with a max value of #maxValue"() {
+        setup:
+            SimpleRandom gen = new SimpleRandom()
+            TTest statsFrameWork = new TTest()
+        when:
+            List listOne = []
+            List listTwo = []
+            for(int i = 0; i < sizeOfList; i++) {
+                listOne.add(gen."$methodToTest"(maxValue))
+                listTwo.add(gen."$methodToTest"(maxValue))
+            }
+            double[] listOneAsDouble = listOne.toArray()
+            double[] listTwoAsDouble = listTwo.toArray()
+            double pScoreHigherIsBetterHere = statsFrameWork.pairedTTest(listOneAsDouble, listTwoAsDouble)
+        then:
+            assert pScoreHigherIsBetterHere > 0.9
+        where:
+            methodToTest     |  maxValue | sizeOfList
+            'nextInt'        |  100000    | 10000
+            'nextFloat'      |  100000    | 10000
+            'nextLong'       |  100000    | 10000
+            'nextDouble'     |  100000    | 10000
+
+    }
+
 }

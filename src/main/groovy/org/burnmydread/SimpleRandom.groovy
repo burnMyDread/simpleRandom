@@ -223,7 +223,7 @@ class SimpleRandom {
     double nextDouble(double maxValue) {
         if(maxValue < Float.MAX_VALUE) {
             float shortenedMaxValue = Float.parseFloat("${maxValue}")
-            return (0.0 + nextFloat(shortenedMaxValue))
+            return (0.0f + nextFloat(shortenedMaxValue))
         } else {
             double out = nextPositiveDouble()
             while (out > maxValue) {
