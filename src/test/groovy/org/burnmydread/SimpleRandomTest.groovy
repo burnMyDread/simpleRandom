@@ -19,7 +19,6 @@ class SimpleRandomTest
     def initTest() {
         when:
             SimpleRandom gen = new SimpleRandom()
-            gen.init()
             byte[] bytes = new byte[1000]
             gen.nextBytes(bytes)
             println bytes
@@ -257,10 +256,10 @@ class SimpleRandomTest
             assert pScoreHigherIsBetterHere > 0.9
         where:
             methodToTest     |  maxValue | sizeOfList
-            'nextInt'        |  100000    | 10000
-            'nextFloat'      |  100000    | 10000
-            'nextLong'       |  100000    | 10000
-            'nextDouble'     |  100000    | 10000
+            'nextInt'        |  1000000  | 1000000
+            'nextFloat'      |  1000000  | 1000000
+            'nextLong'       |  1000000  | 1000000
+            'nextDouble'     |  1000000  | 1000000
 
     }
 

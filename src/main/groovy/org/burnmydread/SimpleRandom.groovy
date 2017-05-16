@@ -5,6 +5,7 @@
 package org.burnmydread
 
 import java.nio.ByteBuffer
+import java.security.SecureRandom
 
 
 /**
@@ -12,33 +13,14 @@ import java.nio.ByteBuffer
  * The intent is to have a easy to use Secure RNG.
  */
 class SimpleRandom {
-    private InputStream devRandom
 
+    private final SecureRandom prng = new  SecureRandom()
     SimpleRandom()  {
 
     }
 
-    void init() throws IllegalStateException {
-        try {
-            devRandom = new File('/dev/urandom').newInputStream()
-        } catch (IOException e) {
-            try {
-                devRandom = new File('/dev/random').newInputStream()
-            } catch (IOException e2) {
-                throw new IllegalStateException('unsupported platform, /dev/urandom and /dev/random not found.')
-            }
-        }
-    }
-
-    private initIfNeeded() {
-        if(devRandom == null) {
-            init()
-        }
-    }
-
     void nextBytes(byte[] bytes) {
-        initIfNeeded()
-        devRandom.read(bytes, 0, bytes.length )
+        prng.nextBytes(bytes)
     }
 
     byte[] nextBytes(int size) {
@@ -171,8 +153,8 @@ class SimpleRandom {
     }
 
     float nextPositiveOrNegativeFloat() {
-        ByteBuffer buffer = nextByteBuffer(4)
-        buffer.getFloat()
+        ByteBuffer decmal = nextByteBuffer(4)
+       decmal.getFloat()
     }
 
     float nextPositiveFloat() {
