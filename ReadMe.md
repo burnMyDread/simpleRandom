@@ -1,4 +1,4 @@
-Description:
+Description: 
 An API compatible with Java.util.Random RNG with a focus on a simple secure API. Based on 'liburandy'.
 
 Principals:
