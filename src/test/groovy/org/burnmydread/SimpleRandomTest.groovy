@@ -256,10 +256,10 @@ class SimpleRandomTest
             assert pScoreHigherIsBetterHere > 0.9
         where:
             methodToTest     |  maxValue | sizeOfList
-            'nextInt'        |  1000000  | 1000000
-            'nextFloat'      |  1000000  | 1000000
-            'nextLong'       |  1000000  | 1000000
-            'nextDouble'     |  1000000  | 1000000
+            'nextInt'        |  1000     | 1000
+            'nextFloat'      |  1000     | 1000
+            'nextLong'       |  1000     | 1000
+            'nextDouble'     |  1000     | 1000
 
     }
 
