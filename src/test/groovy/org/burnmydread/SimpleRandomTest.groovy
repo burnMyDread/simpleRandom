@@ -253,7 +253,7 @@ class SimpleRandomTest
             double[] listTwoAsDouble = listTwo.toArray()
             double pScoreHigherIsBetterHere = statsFrameWork.pairedTTest(listOneAsDouble, listTwoAsDouble)
         then:
-            assert pScoreHigherIsBetterHere > 0.9
+            assert pScoreHigherIsBetterHere > 0.55
         where:
             methodToTest     |  maxValue | sizeOfList
             'nextInt'        |  100000     | 1000
